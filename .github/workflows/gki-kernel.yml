@@ -174,7 +174,7 @@ jobs:
           # Sukisu的补丁仓库
           git clone https://github.com/ShirkNeko/SukiSU_patch.git
           # next修复补丁
-          git clone https://github.com/zzh20188/GKI_KernelSU_SUSFS.git zzh_patch
+          git clone https://github.com/brunoanc/GKI_KernelSU_SUSFS.git zzh_patch
 
           cd kernel_patches
           git checkout 238c4ab682b1dbb0dd1ecb0c242608d0214392a4
@@ -188,10 +188,6 @@ jobs:
           git checkout 83aa64b7548890bb1f2eff6c990c03a1802df27b
           cd ..
 
-          cd zzh_patch
-          git checkout 67b554ce845b82ae6d14dbe9bdc3ae91ac41db17
-          cd ..
-          
       - name: 设置 CONFIG 环境变量
         run: |
           # Set CONFIG dynamically based on inputs values
@@ -233,7 +229,12 @@ jobs:
             cd ./common
             curl -LSsO https://github.com/zzh20188/GKI_KernelSU_SUSFS/raw/refs/heads/dev/5.15-patch/fix_5.15.legacy.patch
             patch -p1 < fix_5.15.legacy.patch
+            cd ..
           fi
+
+          cd common
+          git checkout 87c4ce66affdfd15427fad8a89bc91c279176d29
+          cd ..
 
       - name: 使GKI在一加8E平台正常使用
         if: ${{ inputs.supp_op }}
@@ -241,7 +242,7 @@ jobs:
           echo '切换到驱动目录'
           cd "$CONFIG/common/drivers/"
           echo '当前目录$(pwd),下载支持补丁'
-          curl -LSs "https://github.com/zzh20188/GKI_KernelSU_SUSFS/raw/refs/heads/dev/hmbird_patch.c" -o hmbird_patch.c
+          curl -LSs "https://github.com/brunoanc/GKI_KernelSU_SUSFS/raw/refs/heads/dev/hmbird_patch.c" -o hmbird_patch.c
           if [ ! -f hmbird_patch.c ]; then
             echo "hmbird_patch.c 下载失败"
           fi
@@ -262,7 +263,7 @@ jobs:
                   echo "BRANCH=-s next" >> $GITHUB_ENV
                   ;;
                 "SukiSU")
-                  echo "BRANCH=-s 209c4eaf2a33befab1626f14b782f9617262bf62" >> $GITHUB_ENV
+                  echo "BRANCH=-s builtin" >> $GITHUB_ENV
                   ;;
                 *)
                   echo "BRANCH=-" >> $GITHUB_ENV
@@ -273,7 +274,7 @@ jobs:
               case "$variant_input" in
                 "Official" | "MKSU") echo "BRANCH=-s main" >> $GITHUB_ENV ;;
                 "Next")              echo "BRANCH=-s next" >> $GITHUB_ENV ;;
-                "SukiSU")           echo "BRANCH=-s 209c4eaf2a33befab1626f14b782f9617262bf62" >> $GITHUB_ENV ;;
+                "SukiSU")           echo "BRANCH=-s builtin" >> $GITHUB_ENV ;;
                 *) 
                   echo "错误：未定义开发分支的变体 '$variant_input'" >&2
                   exit 1
@@ -302,7 +303,7 @@ jobs:
             curl -LSs "https://raw.githubusercontent.com/5ec1cff/KernelSU/main/kernel/setup.sh" | bash $BRANCH
           elif [ "${{ inputs.kernelsu_variant }}" == "SukiSU" ]; then
             echo "Adding KernelSU SukiSU..."
-            curl -LSs "https://raw.githubusercontent.com/SukiSU-Ultra/SukiSU-Ultra/main/kernel/setup.sh" | bash $BRANCH
+            curl -LSs "https://raw.githubusercontent.com/SukiSU-Ultra/SukiSU-Ultra/main/kernel/setup.sh" | bash -s 209c4eaf2a33befab1626f14b782f9617262bf62
           fi
       
       - name: SUKISU管理器信息
@@ -580,7 +581,7 @@ jobs:
         run: |
           cd "$CONFIG"
           echo "Adding BBG..."
-          wget -O- https://github.com/vc-teahouse/Baseband-guard/raw/main/setup.sh | sed 's|git clone --branch "\$ref" "\$BBG_REPO" "\$BBG_DIR"|git clone "\$BBG_REPO" "\$BBG_DIR"\n            git -C "\$BBG_DIR" checkout "\$ref"|' | bash -s 75668b6cbd039df0d224e9d14b2a3941c602fd1c
+          wget -O- https://raw.githubusercontent.com/vc-teahouse/Baseband-guard/75668b6cbd039df0d224e9d14b2a3941c602fd1c/setup.sh | sed 's|git clone --branch "\$ref" "\$BBG_REPO" "\$BBG_DIR"|git clone "\$BBG_REPO" "\$BBG_DIR"\n            git -C "\$BBG_DIR" checkout "\$ref"|' | bash -s 75668b6cbd039df0d224e9d14b2a3941c602fd1c
           echo "CONFIG_BBG=y" >> common/arch/arm64/configs/gki_defconfig
           
           # Before sed: Show the original LSM default line for comparison
@@ -758,7 +759,7 @@ jobs:
           if [ "${{ inputs.kernel_version }}" != "6.6" ]; then
             echo "Patching Image file..."
             cd "$CONFIG/out/${{ inputs.android_version }}-${{ inputs.kernel_version }}/dist"
-            curl -LSs "https://raw.githubusercontent.com/ShirkNeko/SukiSU_patch/refs/heads/main/kpm/patch_linux" -o patch
+            curl -LSs "https://github.com/SukiSU-Ultra/SukiSU_patch/raw/83aa64b7548890bb1f2eff6c990c03a1802df27b/kpm/patch_linux" -o patch
             chmod 777 patch
             ./patch
             rm -rf Image
@@ -772,7 +773,7 @@ jobs:
 
             echo "Patching Image file..."
             cd "$CONFIG/bazel-bin/common/kernel_aarch64/"
-            curl -LSs "https://raw.githubusercontent.com/ShirkNeko/SukiSU_patch/refs/heads/main/kpm/patch_linux" -o patch
+            curl -LSs "https://github.com/SukiSU-Ultra/SukiSU_patch/raw/83aa64b7548890bb1f2eff6c990c03a1802df27b/kpm/patch_linux" -o patch
             chmod 777 patch
             ./patch
             rm -rf Image
