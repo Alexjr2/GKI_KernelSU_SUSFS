@@ -176,12 +176,20 @@ jobs:
           # next修复补丁
           git clone https://github.com/zzh20188/GKI_KernelSU_SUSFS.git zzh_patch
 
+          cd kernel_patches
+          git checkout 238c4ab682b1dbb0dd1ecb0c242608d0214392a4
+          cd ..
+
           cd susfs4ksu
           git checkout d43bc04075be14669202e8ad058a22813468e546
           cd ..
 
-          cd kernel_patches
-          git checkout 238c4ab682b1dbb0dd1ecb0c242608d0214392a4
+          cd SukiSU_patch
+          git checkout 83aa64b7548890bb1f2eff6c990c03a1802df27b
+          cd ..
+
+          cd zzh_patch
+          git checkout 67b554ce845b82ae6d14dbe9bdc3ae91ac41db17
           cd ..
           
       - name: 设置 CONFIG 环境变量
@@ -265,7 +273,7 @@ jobs:
               case "$variant_input" in
                 "Official" | "MKSU") echo "BRANCH=-s main" >> $GITHUB_ENV ;;
                 "Next")              echo "BRANCH=-s next" >> $GITHUB_ENV ;;
-                "SukiSU")           echo "BRANCH=-s builtin" >> $GITHUB_ENV ;;
+                "SukiSU")           echo "BRANCH=-s 209c4eaf2a33befab1626f14b782f9617262bf62" >> $GITHUB_ENV ;;
                 *) 
                   echo "错误：未定义开发分支的变体 '$variant_input'" >&2
                   exit 1
@@ -572,7 +580,7 @@ jobs:
         run: |
           cd "$CONFIG"
           echo "Adding BBG..."
-          wget -O- https://github.com/vc-teahouse/Baseband-guard/raw/main/setup.sh | bash
+          wget -O- https://github.com/vc-teahouse/Baseband-guard/raw/main/setup.sh | bash -s 75668b6cbd039df0d224e9d14b2a3941c602fd1c
           echo "CONFIG_BBG=y" >> common/arch/arm64/configs/gki_defconfig
           
           # Before sed: Show the original LSM default line for comparison
