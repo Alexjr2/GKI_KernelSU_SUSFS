@@ -580,7 +580,7 @@ jobs:
         run: |
           cd "$CONFIG"
           echo "Adding BBG..."
-          wget -O- https://github.com/vc-teahouse/Baseband-guard/raw/main/setup.sh | bash -s 75668b6cbd039df0d224e9d14b2a3941c602fd1c
+          wget -O- https://github.com/vc-teahouse/Baseband-guard/raw/main/setup.sh | sed 's|git clone --branch "\$ref" "\$BBG_REPO" "\$BBG_DIR"|git clone "\$BBG_REPO" "\$BBG_DIR"\n            git -C "\$BBG_DIR" checkout "\$ref"|' | bash -s 75668b6cbd039df0d224e9d14b2a3941c602fd1c
           echo "CONFIG_BBG=y" >> common/arch/arm64/configs/gki_defconfig
           
           # Before sed: Show the original LSM default line for comparison
