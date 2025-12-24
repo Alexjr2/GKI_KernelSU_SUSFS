@@ -527,6 +527,12 @@ jobs:
           cp "../../../kernel_patches/samsung/min_kdp/min_kdp.c" min_kdp.c
           echo "obj-y += min_kdp.o" >> Makefile
 
+      - name: Fix WiFi and Bluetooth on Xiaomi 6.6 GKI devices
+        if: ${{ ( inputs.kernel_version == '6.6' ) }}
+        run: |
+          SYMBOL_LIST=$CONFIG/common/android/abi_gki_aarch64_xiaomi
+          echo "device_find_any_child" >> $SYMBOL_LIST
+
       - name: LZ4KD & Lz4k_oplus配置
         if: ${{ inputs.use_zram }}
         run: |
