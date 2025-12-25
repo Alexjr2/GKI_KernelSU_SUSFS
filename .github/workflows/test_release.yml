@@ -33,7 +33,7 @@ on:
           - Stable
           - Dev
           - Other
-        default: Dev(Development)
+        default: Dev
 
       # kernelsu_branch_other:
       #   description: "If you selected 'Other', please specify your custom branch"
