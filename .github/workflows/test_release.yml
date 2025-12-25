@@ -167,7 +167,7 @@ jobs:
             # Fetch the latest tag
             TAG=$(git ls-remote --tags --sort=-v:refname $REPO_URL | grep -o 'refs/tags/.*' | cut -d'/' -f3 | head -n1)
             if [[ -z "$TAG" ]]; then
-              echo "Error: Could not fetch latest tag for Stable(Standard)" >&2
+              echo "Error: Could not fetch latest tag for Stable" >&2
               exit 1
             fi
             KSU_REF=$TAG
