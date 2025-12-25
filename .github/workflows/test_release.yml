@@ -91,9 +91,9 @@ jobs:
       REPO_NAME: GKI_KernelSU_SUSFS
       SUS_VERSION: ''
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      RELEASE_NAME: ${{ format('GKI Kernel: {0}{1} ({2}) & SUSFS {3}', (inputs.kernelsu_variant == 'Next' ? 'KernelSU-' : ''), inputs.kernelsu_variant, needs.get_manager.outputs.ksuVer, needs.get_manager.outputs.susVer) }}
+      RELEASE_NAME: "GKI Kernel: ${{ inputs.kernelsu_variant == 'Next' && 'KernelSU-' || '' }}${{ inputs.kernelsu_variant }}(${{ needs.get_manager.outputs.ksuVer }})  & SUSFS ${{ needs.get_manager.outputs.susVer }}"
       RELEASE_NOTES: |
-        This release includes KernelSU variant: ${{ inputs.kernelsu_variant }} and SUSFS ${{ needs.get_manager.outputs.susVer }}.
+        This release includes KernelSU variant: **${{ inputs.kernelsu_variant == 'Next' && 'KernelSU-' || '' }}${{ inputs.kernelsu_variant }}**、SUSFS ${{ needs.get_manager.outputs.susVer }} ${{ inputs.use_zram && '、LZ4KD' || '' }}
         
         Features:
         - KernelSU variant: ${{ inputs.kernelsu_variant }} ${{ inputs.kernelsu_variant == 'Official' && ' (Official)' || '' }}
