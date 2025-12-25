@@ -331,8 +331,8 @@ jobs:
         continue-on-error: true
         run: |
             echo "Uploading KSU Manager"
-            gh release upload ${{ env.NEW_TAG }} "./downloaded-artifacts/*Manager*/*"
-            gh release upload ${{ env.NEW_TAG }} "./downloaded-artifacts/susfs-*/*"
+            gh release upload ${{ env.NEW_TAG }} "./downloaded-artifacts/*Manager*/*.apk"
+            gh release upload ${{ env.NEW_TAG }} "./downloaded-artifacts/susfs-*/*.zip"
 
       - name: Dynamically upload release assets
         run: |
