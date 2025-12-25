@@ -19,9 +19,9 @@ on:
         type: string
         default: Dev
       version:
-        required: false
+        required: true
         type: string
-        default: ""
+        default: "-android15-8-g33c1ba9ffede-4k"
       use_zram:
         description: 'Enable additional ZRAM algorithms?'
         required: true
