@@ -1,7 +1,7 @@
 name: GetManager
 permissions:
   contents: write  # Allow writing to repository contents (for pushing tags)
-  actions: read   # Allows triggering actions
+  actions: read    # Allows triggering actions
 
 on:
   workflow_call: # This allows this workflow to be called from another workflow
@@ -22,9 +22,9 @@ jobs:
   get_ksu_manager:
     runs-on: ubuntu-latest
     outputs:
-      # 输出1: KSU版本号
+      # Output 1: KSU version
       ksuVer: ${{ steps.get_version.outputs.kversion }}
-      # 输出2: SUSFS版本号
+      # Output 2: SUSFS version
       susVer: ${{ steps.get_version.outputs.sversion }}
     env:
       CCACHE_COMPILERCHECK: "%compiler% -dumpmachine; %compiler% -dumpversion"
@@ -55,14 +55,13 @@ jobs:
           echo "  - Ref Type:          ${{ github.ref_type }}"
           echo " "
           echo "======================================================="
-          
-      - name: 安装依赖
+
+      - name: Install dependencies
         run: sudo apt install -y git curl jq
 
-      - name: 获取 KSU & SUSFS 版本
+      - name: Fetch KSU & SUSFS versions
         id: get_version
         run: |
-
           if [ "${{ inputs.kernelsu_variant }}" == "Next" ]; then
             echo "This is the Next variant"
             git clone https://github.com/KernelSU-Next/KernelSU-Next.git KernelSU
@@ -70,11 +69,11 @@ jobs:
             echo "This is the SukiSU variant"
             git clone https://github.com/SukiSU-Ultra/SukiSU-Ultra.git KernelSU
           elif [ "${{ inputs.kernelsu_variant }}" == "Official" ]; then
-            echo "This is the Official"
+            echo "This is the Official variant"
             git clone https://github.com/tiann/KernelSU.git KernelSU
           elif [ "${{ inputs.kernelsu_variant }}" == "MKSU" ]; then
-            echo "This is the Official"
-            git clone https://github.com/5ec1cff/KernelSU.git KernelSU    
+            echo "This is the MKSU variant"
+            git clone https://github.com/5ec1cff/KernelSU.git KernelSU
           else
             echo "Unknown variant"
           fi
@@ -83,9 +82,9 @@ jobs:
 
           cd KernelSU
 
-          # 计算KSU版本号
+          # Calculate KSU version
           KSU_GIT_VERSION=$(git rev-list --count HEAD)
-          
+
           if [ "${{ inputs.kernelsu_variant }}" == "SukiSU" ]; then
             KSU_VERSION=$((40000 + KSU_GIT_VERSION - 2815))
           elif [ "${{ inputs.kernelsu_variant }}" == "Official" ] || [ "${{ inputs.kernelsu_variant }}" == "MKSU" ]; then
@@ -93,19 +92,20 @@ jobs:
           elif [ "${{ inputs.kernelsu_variant }}" == "Next" ]; then
             KSU_VERSION=$((30000 + KSU_GIT_VERSION))
           fi
+
           echo $KSU_VERSION
           echo "KSU_VERSION=$KSU_VERSION" >> $GITHUB_ENV
 
-          # 计算SUSFS版本号
-          INFO="https://gitlab.com/simonpunk/susfs4ksu/-/raw/gki-android14-6.1/ksu_module_susfs/module.prop\?ref_type\=heads"
+          # Calculate SUSFS version
+          INFO="https://gitlab.com/simonpunk/susfs4ksu/-/raw/gki-android14-6.1/ksu_module_susfs/module.prop?ref_type=heads"
           SUS_VERSION=$(curl -s $INFO | awk -F '=' '$1 == "version" { print $2 }')
           echo $SUS_VERSION
 
-          # 导出这两个值给release
+          # Export outputs
           echo "kversion=$KSU_VERSION" >> $GITHUB_OUTPUT
           echo "sversion=$SUS_VERSION" >> $GITHUB_OUTPUT
 
-      - name: 添加 KernelSU
+      - name: Add KernelSU Manager
         id: add_KSU
         continue-on-error: true
         run: |
@@ -122,35 +122,31 @@ jobs:
             REPO="5ec1cff/KernelSU"
             KSUM="manager"
           elif [ "${{ inputs.kernelsu_variant }}" == "Official" ]; then
-            echo "KSU..."
+            echo "KernelSU Official..."
             REPO="tiann/KernelSU"
             KSUM="manager"
           fi
 
           FILENAME=$([[ "${{ inputs.kernelsu_variant }}" == "Next" ]] && echo "build-manager-ci.yml" || echo "build-manager.yml")
-          
-          
-          # 初始化
+
           NUMBER=0
           DOWNLOAD_URL=""
 
-          echo "开始查找包含 'manager' 产物的构建..."
+          echo "Searching for successful builds containing 'manager' artifact..."
           while true; do
             echo "--------------------------------------------------"
-            echo "正在检查第 ${NUMBER} 个历史构建 (0代表最新)..."
+            echo "Checking build index ${NUMBER} (0 = latest)..."
 
             if [ "$NUMBER" -ge 9 ]; then
-              echo "查找九次仍然失败，跳出循环。"
+              echo "Failed after 9 attempts, exiting loop."
               break
             fi
-
-            # 1. 获取指定顺序的成功构建的ID
 
             BUILD_ID=$(curl -s -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
               "https://api.github.com/repos/$REPO/actions/workflows/$FILENAME/runs?status=success" |
               jq -r '.workflow_runs['"$NUMBER"'].id')
 
-            echo "找到构建 ID: $BUILD_ID"
+            echo "Found build ID: $BUILD_ID"
 
             ARTIFACTS=$(curl -s -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
               "https://api.github.com/repos/$REPO/actions/runs/$BUILD_ID/artifacts")
@@ -158,63 +154,61 @@ jobs:
             result=$(echo "$ARTIFACTS" | jq -r '.artifacts[] | select(.name | contains("'"$KSUM"'")) | .name')
 
             if [ -z "$result" ]; then
-              echo "没有找到包含 '$KSUM' 的项"
+              echo "No artifact containing '$KSUM' found"
               NUMBER=$((NUMBER + 1))
             else
               echo "$result"
               DOWNLOAD_URL=$(echo "$ARTIFACTS" | jq -r '.artifacts[] | select(.name == "'"$KSUM"'") | .archive_download_url')
               break
             fi
-
           done
-         
-          # 下载 Manager 文件
-          curl -L -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" -o "${{ inputs.kernelsu_variant }}-管理器(${{ env.KSU_VERSION }}).zip" "$DOWNLOAD_URL"
-          echo "Manager 文件已下载为：${{ inputs.kernelsu_variant }}-管理器(${{ env.KSU_VERSION }}).zip"
+
+          # Download Manager file
+          curl -L -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+            -o "${{ inputs.kernelsu_variant }}-Manager(${{ env.KSU_VERSION }}).zip" "$DOWNLOAD_URL"
+
+          echo "Manager downloaded as: ${{ inputs.kernelsu_variant }}-Manager(${{ env.KSU_VERSION }}).zip"
           unzip *.zip
           rm -rf *.zip
 
-      - name: 添加 SUSFS 模块
+      - name: Add SUSFS module
         id: add_SUSFS
         continue-on-error: true
         run: |
           BUILD_ID=$(curl -s -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
-          "https://api.github.com/repos/sidex15/susfs4ksu-module/actions/workflows/build.yml/runs?status=success" |
-          jq -r '.workflow_runs[0].id')
+            "https://api.github.com/repos/sidex15/susfs4ksu-module/actions/workflows/build.yml/runs?status=success" |
+            jq -r '.workflow_runs[0].id')
 
           ARTIFACTS=$(curl -s -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
-          "https://api.github.com/repos/sidex15/susfs4ksu-module/actions/runs/$BUILD_ID/artifacts")
+            "https://api.github.com/repos/sidex15/susfs4ksu-module/actions/runs/$BUILD_ID/artifacts")
 
-          DOWNLOAD_URL=$(echo "$ARTIFACTS" | jq -r '.artifacts[0].archive_download_url') 
-
+          DOWNLOAD_URL=$(echo "$ARTIFACTS" | jq -r '.artifacts[0].archive_download_url')
           NAME=$(echo "$ARTIFACTS" | jq -r '.artifacts[0].name')
+
           echo "SUSFS_NAME=$NAME" >> $GITHUB_ENV
           NAME="susfs-$NAME.zip"
-          
+
           echo $DOWNLOAD_URL
           echo $NAME
-          # 下载 Manager 文件
-          curl -L -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" -o "$NAME" "$DOWNLOAD_URL"
-          echo "$NAME 文件已下载.zip"
-          
-          
-          echo "正在检查调用者: ${{ github.caller_workflow }}"
 
-          # 由用户调用或是由作者上传到release?
+          curl -L -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" -o "$NAME" "$DOWNLOAD_URL"
+          echo "$NAME downloaded."
+
+          echo "Checking caller workflow: ${{ github.caller_workflow }}"
 
           if [ "${{ github.workflow }}" == "测试发布" ]; then
-            echo "这是测试发布工作流"
+            echo "This is a test release workflow"
             mkdir -p susfs-module && mv $NAME susfs-module
           else
-            echo "这是其他工作流"
+            echo "This is another workflow"
             mkdir -p susfs-module && unzip *.zip -d susfs-module
           fi
 
       - name: Notify on failure
         if: steps.add_KSU.outcome == 'failure'
-        run: echo "下载CI构建的KSU失败!"
+        run: echo "Failed to download CI-built KSU Manager!"
 
-      - name: 上传APK
+      - name: Upload APK
         if: steps.add_KSU.outcome == 'success'
         uses: actions/upload-artifact@v4
         with:
@@ -222,7 +216,7 @@ jobs:
           path: |
             *.apk
 
-      - name: 上传SUSFS模块
+      - name: Upload SUSFS module
         if: steps.add_SUSFS.outcome == 'success'
         uses: actions/upload-artifact@v4
         with:
