@@ -54,15 +54,15 @@ on:
 
       use_bbg:
         description: 'Enable BBG anti-brick security patch?'
-        required: false
-        type: boolean
-        default: false
-
-      use_kpm:
-        description: 'Enable KPM feature?'
         required: true
         type: boolean
         default: true
+
+      use_kpm:
+        description: 'Enable KPM feature?'
+        required: false
+        type: boolean
+        default: false
 
       get_manager:
         description: 'Also fetch the latest KSU Manager?'
