@@ -23,32 +23,32 @@ on:
         type: string
         default: ""
       use_zram:
-        description: '是否开启增加更多ZRAM算法?'
+        description: 'Enable additional ZRAM algorithms?'
         required: true
         type: boolean
         default: true
       use_bbg:
-        description: '是否开启BBG防格机补丁?'
+        description: 'Enable BBG anti-brick patch?'
         required: true
         type: boolean
         default: true
       use_kpm:
-        description: '是否开启KPM功能?'
+        description: 'Enable KPM feature?'
         required: true
         type: boolean
         default: true
       supp_op:
-        description: '是否开启一加8E处理器机型支持?'
+        description: 'Enable OnePlus 8E processor device support?'
         required: false
         type: boolean
         default: false
       onlyAk3:
-        description: '仅上传AK3压缩包?(无boot,下载更快)'
+        description: 'Upload AK3 archive only? (No boot image, faster download)'
         required: false
         type: boolean
         default: false
       build_time:
-        description: '设置内核构建时间(格式见仓库说明)'
+        description: 'Set kernel build time (format described in repository documentation)'
         required: false
         type: string
 
