@@ -1,126 +1,120 @@
-### 这是一个自动构建GKI内核的仓库
+### This is a repository for automated GKI kernel builds
 
-> 不支持一加ColorOS14、15，刷入后可能需要清除数据开机
+> Not supported: OnePlus ColorOS14/15. After flashing you may need to wipe data to boot.
 >
-> 第一次使用务必**详细阅读**以下内容，不要因为懒惰而占用他人时间！
+> Please read the following carefully on first use — don't waste others' time by being lazy!
 >
-> 尝试构建集成 [hymo挂载元模块](https://github.com/Anatdx/hymo)的GKI内核，但该项目目前仅支持6.6，因此未完整合并到本仓库主分支。链接为[hymo+gki](https://github.com/zzh20188/GKI_KernelSU_SUSFS/releases/tag/v2.0.0-r18)
+> Attempted to build a GKI kernel integrated with [hymo mount meta-module](https://github.com/Anatdx/hymo). Because that project currently only supports 6.6, it has not been fully merged into this repository's main branch. Link: [hymo+gki](https://github.com/zzh20188/GKI_KernelSU_SUSFS/releases/tag/v2.0.0-r19)
 >
-> Attempted to build a GKI kernel with [hymo](https://github.com/Anatdx/hymo) integration. However, since the project currently only supports kernel 6.6, it has not been fully merged into the main branch.
-> Link: [hymo+gki](https://github.com/zzh20188/GKI_KernelSU_SUSFS/releases/tag/v2.0.0-r19)
+> Attempted to build a GKI kernel with [hymo](https://github.com/Anatdx/hymo) integration. However, since the project currently only supports kernel 6.6, it has not been fully merged into the main branch. Link: [hymo+gki](https://github.com/zzh20188/GKI_KernelSU_SUSFS/releases/tag/v2.0.0-r19)
 
-### 无限重启？
-1. 一加/真我/op：进入系统rec清除Data数据后重启
-2. 小米：少数机型因为启动引导因avb验证导致无法启动分区，需要关闭[avb验证](https://magiskcn.com/disable-avb)
-3. zram:一些机型或系统使用了带zram补丁的内核也可能，遇到该情况可以刷[Release](https://github.com/zzh20188/GKI_KernelSU_SUSFS/releases)中不带zram的内核，或者在编译选项中不勾选[增加更多ZRAM算法]以编译无zram的内核
-4. 其他：KSU驱动导致的bootloop，错误代码未得到修复而构建内核
+### Endless reboots?
+1. OnePlus/realme/OPPO: enter system recovery and wipe Data, then reboot.
+2. Xiaomi: on some devices the boot fails due to AVB verification on the boot partition; disable [AVB verification](https://magiskcn.com/disable-avb).
+3. zram: some devices or systems running kernels with zram patches may also trigger this; in that case flash a kernel from the [Release page](https://github.com/Alexjr2/GKI_KernelSU_SUSFS/releases) that does not include zram, or in compilation disable zram patches (if applicable).
+4. Other: KSU driver causing bootloop — if the error code is not fixed in the source used to build the kernel, the problem will remain in the compiled kernel.
 
-### BUG反馈？
-该仓库仅提供GKI内核编译流程，也就是把KSU变体驱动合并内核二进制。关系为：对应KSU仓库或SUSFS更新了代码，该仓库编译包含最新KSU的内核，用户刷入编译成品使用。
-如果恰巧在KSU最新提交中出现了某一BUG，而你刷入了包含这段代码的内核，你应该向制造问题代码的地方反馈或者耐心等待下一版本是否修复。
-**而不是说本仓库更新了有BUG的内核，请快解决**
+### Bug reports?
+This repository only provides the GKI kernel build flow — i.e., it merges KSU variant drivers into the kernel binary. Relationship: when the corresponding KSU repository or SUSFS updates code, this repository builds kernels that include the latest KSU. If by chance a bug is introduced in the latest KSU commit and you flash a kernel containing that code, you should report the bug to the source that introduced it or wait for the next upstream fix.
+Do not assume "this repository updated a buggy kernel — fix it immediately."
 
 ### Tips
-1. 关于安全补丁
-    - 手机设置里的安全补丁时间与GKI内核的安全补丁时间**无关**，请无视它
-2. 关于android版本
-    - 手机系统的安卓版本与GKI内核的安卓版本无关，应当对照手机内核版本的 **android**
-    - 假设手机设置的内核版本为 5.10.66-**android12**-9-00001-g41ff3fa8fop9-ab8161528
-    - 那么你需要刷入[在此](https://github.com/zzh20188/GKI_KernelSU_SUSFS/releases)下载的 **android12**-5.10.66-2022-01-AnyKernel3.zip 文件
+1. About security patches
+    - The security patch date shown in the phone settings is unrelated to the GKI kernel's security patch date — ignore it.
+2. About Android versions
+    - The Android release of the phone's system is unrelated to the GKI kernel's Android target. Match the kernel to the phone's kernel Android tag.
+    - Example: if your phone's kernel version shows `5.10.66-android12-9-00001-g41ff3fa8fop9-ab8161528`, then you need to flash the `android12-5.10.66-2022-01-AnyKernel3.zip` file downloaded from [here](https://github.com/zzh20188/GKI_KernelSU_SUSFS/releases).
 
-### 下载
-可以[在此](https://github.com/zzh20188/GKI_KernelSU_SUSFS/releases)下载您的资源
-1. 关于Anykernel3.zip，下载即用！
-   - 然后使用刷入软件，例如[HorizonKernelFlasher](https://github.com/libxzr/HorizonKernelFlasher/releases)进行刷写内核
-2. 关于boot.img，下载与你内核格式相匹配的（无压缩、gz、lz4），[参考](https://kernelsu.org/zh_CN/guide/installation.html#install-by-kernelsu-boot-image) **找到合适的 boot.img** 一节
-    - 使用[FASTBOOT](https://magiskcn.com/)刷入，或者使用刷写软件刷写到ROOT所在插槽的boot分区(例如爱玩机、Kernelflasher)
+### Downloads
+You can download releases [here](https://github.com/Alexjr2/GKI_KernelSU_SUSFS/releases)
+1. AnyKernel3.zip: Download and it's ready to use!
+   - Then use a flasher app such as [KernelFlasher](https://github.com/fatalcoder524/KernelFlasher/releases) to flash the kernel.
+2. boot.img: download the boot image that matches your kernel format (no compression, gz, lz4). See [this guide](https://kernelsu.org/zh_CN/guide/installation.html#install-by-kernelsu-boot_image) to find the correct boot.img.
+    - Flash with FASTBOOT ([guide](https://magiskcn.com/)) or use a flasher to write to the boot partition on the slot that has root (e.g., Aiwanj, Kernelflasher).
 
-
-
-### 支持
-| 功能 | 说明 |
+### Supported
+| Feature | Notes |
 | --- | --- |
-| [KernelSU](https://kernelsu.org/zh_CN/) | 包括**原版、MKSU、SUKISU、NEXT** |
-| [SUSFS4](https://gitlab.com/simonpunk/susfs4ksu) | 在内核层面辅助KSU隐藏的功能补丁 |
-| [LZ4KD](https://github.com/ShirkNeko/SukiSU_patch/tree/main/other) | 听说是来自HUAWEI source的ZRAM算法，补丁由[云彩之枫](http://www.coolapk.com/u/24963680)移植 |
-| [LZ4 1.10.0](https://github.com/lz4/lz4/releasesr) | GKI内核默认的LZ4算法升级 |
+| [KernelSU](https://kernelsu.org/zh_CN/) | Includes original, MKSU, SUKISU, NEXT variants |
+| [SUSFS4](https://gitlab.com/simonpunk/susfs4ksu) | Kernel-level patches that assist KernelSU hiding features |
+| [LZ4KD](https://github.com/ShirkNeko/SukiSU_patch/tree/main/other) | A ZRAM algorithm reportedly from HUAWEI source; patch ported by [云彩之枫](http://www.coolapk.com/u/24963680) |
+| [LZ4 1.10.0](https://github.com/lz4/lz4/releasesr) | Upgrade of the default LZ4 algorithm for GKI kernels |
 
 <details>
 
-<summary>还支持这几种算法，可在scene的ZRAM切换</summary>
+<summary>Other algorithms supported (can be switched in scene ZRAM)</summary>
 
-### LZ4K、LZ4HC、deflate、842、~~zstdn~~、lz4k_oplus
+### LZ4K, LZ4HC, deflate, 842, ~~zstdn~~, lz4k_oplus
 
 </details>
 
-### KSU管理器 & SUSFS模块
-由于一些原因，你不可缺少最新管理器和模块(见下)
-> ##### 如果长期不更新管理器，而只更新内核也就是使用ak3刷入，那么软件显示可能异常，会显得你和别人不一样，如SUKISU显示LKM，NEXT一些参数显示未知
-> ##### SUKISU内置SUSFS功能相对模块，缺失try mount/umount数量显示功能，以及自定义界面的一些选项
-#### 在编译完成后，你会看到类似 `SukiSU-Manager(13235)` 和 `susfs-release-1.5.2+_537cdba` 的压缩包，简单来说这就是与内核一同上传的***最新管理器与susfs模块***。
+### KSU Manager & SUSFS module
+Because of some reasons, you need the latest manager and module (see below).
+> ##### If you keep using an old manager while only updating the kernel (e.g., flashing with ak3), the app may display things incorrectly and look different from others; for example SUKISU may show "LKM", and some NEXT parameters may appear missing...
+> ##### The SUKISU built-in SUSFS features are more limited than the module: it lacks try mount/umount count display and some custom UI options.
+#### After a successful build you will see zip files like `SukiSU-Manager(13235)` and `susfs-release-1.5.2+_537cdba` — these are the latest manager and susfs module uploaded together with the kernel. In short, they are the latest manager and susfs module that accompany the kernel build.
 
-![例子](./assets/action.png)
+![example](./assets/action.png)
 
-#### 同样的，在[Release](https://github.com/zzh20188/GKI_KernelSU_SUSFS/releases)的底部也同样包含它们
+#### Similarly, these are also included at the bottom of the [Release page](https://github.com/zzh20188/GKI_KernelSU_SUSFS/releases)
 
 ![release](./assets/release.png)
 
 
-### 内核构建时间
-在构建内核时，可以指定内核的构建时间。在Action的输入框中输入指定格式的字符即可。
-如：**Thu Jul 17 14:26:50 UTC 2025**
-> 这个时间表示的是2025年7月17日的14:26:50（协调世界时间，UTC）。
-当你没有输入指定时间，则为构建内核时的时间
+### Kernel build time
+You can specify the kernel build time when building. Enter a string in the Action input in the specified format.
+Example: **Thu Jul 17 14:26:50 UTC 2025**
+> This time means 2025-07-17 14:26:50 (UTC).
+If you do not specify a time, the kernel build will use the build machine's current time.
 
-
-### 紧急救援指南
+### Emergency rescue guide
 
 > [!IMPORTANT]
-> **触发条件**  
-> 当设备因以下原因无法启动时需执行救援：  
-> - 刷入错误/不兼容的内核
-> - 内核版本适配异常（如5.10.66刷233版本的内核）
-1. 进入FASTBOOT模式
+> **Trigger conditions**  
+> Perform rescue when the device cannot boot due to:
+> - Flashing an incorrect/incompatible kernel
+> - Kernel version mismatches (e.g., flashing a kernel for a different subversion)
+1. Enter FASTBOOT mode
 
-- 物理键组合：电源+音量- 或者 ADB命令： `adb reboot bootloader`
+- Physical key combo: Power + Volume Down, or use ADB: `adb reboot bootloader`
 
-2. 执行刷写命令
+2. Execute flash command
 ```bash
-$ fastboot flash boot <boot.img文件全称>
+$ fastboot flash boot <full-boot.img-file-name>
 ```
-### 原版镜像获取途径
-1. 从现有固件提取
+### Ways to obtain original images
+1. Extract from existing firmware
 
-- 卡刷包：解压后使用[payload-dumper工具](https://magiskcn.com/payload-dumper-go-boot.html)
+- From update zip: unpack and use [payload-dumper tool](https://magiskcn.com/payload-dumper-go-boot.html)
 
-- 线刷包：直接解压获取boot.img
+- From firmware package: unpack and directly get boot.img
 
-2.外部资源获取
+2. Get externally
 
-- 社区平台搜索：机型+原厂boot (如XDA/酷安)
+- Community searches: look for stock boot for your model on XDA/Coolapk/etc.
 
-- [移动端在线提取远程获取](https://magiskcn.com/payload-dumper-compose.html)
+- [Remote extraction tools for mobile](https://magiskcn.com/payload-dumper-compose.html)
 
 > [!TIP]
-> ### 内核版本兼容性说明
+> ### Kernel version compatibility notes
 > 
-> **1. 跨子版本刷机规则**  
-> 当手机GKI主版本为5.10.x时（如5.10.168），可刷写同主版本更高子版本的内核（如5.10.198）。  
-> 关于**X-lts**版本，以 `android12-5.10.X-lts-AnyKernel3.zip` 为例：
-> - **X-lts** 表示长期支持版（子版本号最大，当前示例为5.10.238）
-> - LTS随着GKI源码更新，编译版本号将持续递增（其他如198的版本，是永久固定的）
-> - ⚠️ 注意：LTS虽为最新，**但**最新版≠最稳定（如6.6.x存在自动重启BUG）
+> 1. Cross-subversion flashing rules  
+> If the phone's GKI main version is 5.10.x (e.g., 5.10.168), you can flash kernels of the same main version but with a higher subversion (e.g., 5.10.198).  
+> Example with `X-lts`: for `android12-5.10.X-lts-AnyKernel3.zip`:
+> - `X-lts` indicates Long Term Support (largest subversion, current example 5.10.238)
+> - LTS will increment as GKI source updates; other numbers like 198 are fixed
+> - ⚠️ Note: LTS being newest ≠ most stable (for example, 6.6.x has an auto-reboot bug)
 > 
-> **2. 内核版本伪装方法**  
-> 在MT管理器终端执行：
+> 2. Kernel version spoofing method  
+> In MT Manager terminal run:
 > ```bash
 > uname -r | sed 's/^[^-]*//'
 > ```
-> 获取后直接复制，将此版本号填入Action编译面板即可实现内核版本伪装。
+> Copy the output and paste that version into the Action build panel to spoof the kernel version.
 > 
-> **3. 编译优化建议**  
-> 修改 [配置文件](.github/workflows/kernel-a12-5.10.yml)（如kernel-a12-5.10.yml）：
-> - ▶️ 删除/注释不需要的GKI版本配置（**加速编译**）
+> 3. Build optimization suggestions  
+> Edit the [workflow files](.github/workflows/kernel-a12-5.10.yml) (e.g., kernel-a12-5.10.yml):
+> - ▶️ Remove or comment out GKI versions you don't need (this will speed up builds)
 
-### 更多内容
-可以提及您的意见...我会尝试！
+### More
+You can leave feedback... I will try!
