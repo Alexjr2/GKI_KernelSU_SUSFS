@@ -22,10 +22,10 @@ on:
         required: true
         type: choice
         options:
-          - Stable(Standard)
-          - Dev(Development)
-          - Other(Other/Specified)
-        default: Stable(Standard)
+          - Stable
+          - Dev
+          - Other
+        default: Dev
       version:
         description: 'Custom version name (e.g. located at 6.6.77-android15-8<custom-version>; leave empty to use default version)'
         required: false
