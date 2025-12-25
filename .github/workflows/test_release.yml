@@ -54,9 +54,9 @@ on:
 
       use_bbg:
         description: 'Enable BBG anti-brick security patch?'
-        required: true
+        required: false
         type: boolean
-        default: true
+        default: false
 
       use_kpm:
         description: 'Enable KPM feature?'
