@@ -13,11 +13,11 @@ on:
       kernelsu_variant:
         required: true
         type: string
-        default: Next
+        default: SukiSU
       kernelsu_branch:
         required: true
         type: string
-        default: Stable
+        default: Dev
       version:
         required: false
         type: string
