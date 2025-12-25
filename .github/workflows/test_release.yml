@@ -60,7 +60,7 @@ on:
 
       use_kpm:
         description: 'Enable KPM feature?'
-        required: false
+        required: true
         type: boolean
         default: false
 
