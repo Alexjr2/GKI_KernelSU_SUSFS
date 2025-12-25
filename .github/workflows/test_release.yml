@@ -113,14 +113,20 @@ jobs:
         -> ${{ inputs.kernelsu_variant == 'Next' && 'KernelSU-' || '' }}${{ inputs.kernelsu_variant }}${{ inputs.kernelsu_variant == 'Official' && 'Original' || '' }}${{ inputs.kernelsu_branch == 'Dev' && format('({0})', needs.get_manager.outputs.ksuVer) || 'Stable' }}
         -> SUSFS ඞ ${{ needs.get_manager.outputs.susVer }}
         -> SUSFS Inline Hooks
-        ${{ inputs.kernelsu_variant != 'Official' && '-> Magic Mount Support' || '-> OVERLAYFS Support' }}
+        -> ${{ inputs.kernelsu_variant != 'Official' && '-> Magic Mount Support' || '-> OVERLAYFS Support' }}
+        -> Ptrace Patch Support for Older Kernels (<5.16)
+        -> IPSet Support for Advanced Network Filtering
+        -> Wireguard Support
+        -> BBR v1 Support
         -> BBG Security Patch ${{ inputs.use_bbg && 'Enabled' || 'Disabled' }}
-        ${{ inputs.use_kpm && '-> KPM Support' || '' }}
+        -> ${{ inputs.use_kpm && '-> KPM Support' || 'KPM Not Support' }}
         -> **LZ4KD&ONEPLUS_LZ4K**  ${{ inputs.use_zram && 'Enabled' || 'Disabled' }}
         -> lz4: v1.10.0 ${{ inputs.use_zram && 'Enabled' || 'Disabled' }}
 
         Module:
         -> https://github.com/sidex15/ksu_module_susfs
+        Kernel Flasher:
+        -> https://github.com/fatalcoder524/KernelFlasher/releases
 
     steps:
       - name: Checkout code
