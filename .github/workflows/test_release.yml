@@ -332,7 +332,7 @@ jobs:
         run: |
             echo "Uploading KSU Manager"
             gh release upload ${{ env.NEW_TAG }} "./downloaded-artifacts/*Manager*/*"
-            gh release upload ${{ env.NEW_TAG }} "./downloaded-artifacts/susfs-*"
+            gh release upload ${{ env.NEW_TAG }} "./downloaded-artifacts/susfs-*/*"
 
       - name: Dynamically upload release assets
         run: |
