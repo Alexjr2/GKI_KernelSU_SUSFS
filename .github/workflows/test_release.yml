@@ -101,7 +101,7 @@ jobs:
     if: ${{ inputs.make_release }}
 
     env:
-      REPO_OWNER: zzh20188
+      REPO_OWNER: Alexjr2
       REPO_NAME: GKI_KernelSU_SUSFS
       SUS_VERSION: ''
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
