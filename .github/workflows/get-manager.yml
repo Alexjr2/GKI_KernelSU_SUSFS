@@ -196,7 +196,7 @@ jobs:
 
           echo "Checking caller workflow: ${{ github.caller_workflow }}"
 
-          if [ "${{ github.workflow }}" == "测试发布" ]; then
+          if [ "${{ github.workflow }}" == "Test Release" ]; then
             echo "This is a test release workflow"
             mkdir -p susfs-module && mv $NAME susfs-module
           else
