@@ -240,7 +240,7 @@ jobs:
           variant_input="${{ inputs.kernelsu_variant }}"
 
           case "$branch_input" in
-            "Stable(标准)")
+            "Stable")
               case "$variant_input" in
                 "Next")
                   echo "BRANCH=-s stable" >> $GITHUB_ENV
@@ -253,7 +253,7 @@ jobs:
                   ;;
               esac
               ;;
-            "Dev(开发)")
+            "Dev")
               case "$variant_input" in
                 "Official" | "MKSU") echo "BRANCH=-s main" >> $GITHUB_ENV ;;
                 "Next")              echo "BRANCH=-s dev" >> $GITHUB_ENV ;;
