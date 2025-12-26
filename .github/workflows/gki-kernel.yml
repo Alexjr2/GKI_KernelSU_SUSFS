@@ -35,7 +35,7 @@ on:
         required: false
         type: string
       version:
-        required: false
+        required: true
         type: string
       use_zram:
         required: true
@@ -46,10 +46,6 @@ on:
         type: boolean
         default: true
       use_kpm:
-        required: true
-        type: boolean
-        default: false
-      supp_op:
         required: true
         type: boolean
         default: false
