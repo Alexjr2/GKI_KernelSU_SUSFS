@@ -44,7 +44,7 @@ on:
         description: 'Custom version name (suffix after 5.10.198 / leave empty to use default version)'
         required: true
         type: string
-        default: "-android15-8-g33c1ba9ffede-4k"
+        default: "-g33c1ba9ffede-4k"
 
       use_zram:
         description: 'Enable additional ZRAM algorithms?'
