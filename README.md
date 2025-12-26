@@ -38,7 +38,7 @@ You can download releases [here](https://github.com/Alexjr2/GKI_KernelSU_SUSFS/r
 | [KernelSU](https://kernelsu.org/zh_CN/) | Includes original, MKSU, SUKISU, NEXT variants |
 | [SUSFS4](https://gitlab.com/simonpunk/susfs4ksu) | Kernel-level patches that assist KernelSU hiding features |
 | [LZ4KD](https://github.com/ShirkNeko/SukiSU_patch/tree/main/other) | A ZRAM algorithm reportedly from HUAWEI source; patch ported by [云彩之枫](http://www.coolapk.com/u/24963680) |
-| [LZ4 1.10.0](https://github.com/lz4/lz4/releasesr) | Upgrade of the default LZ4 algorithm for GKI kernels |
+| [LZ4 1.10.0](https://github.com/lz4/lz4/releases) | Upgrade of the default LZ4 algorithm for GKI kernels |
 
 <details>
 
