@@ -53,10 +53,6 @@ on:
         required: true
         type: boolean
         default: false
-      onlyAk3:
-        required: true
-        type: boolean
-        default: false
       build_time:
         required: false
         type: string
