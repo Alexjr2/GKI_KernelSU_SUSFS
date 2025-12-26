@@ -42,11 +42,6 @@ on:
         required: false
         type: boolean
         default: false
-      onlyAk3:
-        description: 'Upload AK3 archive only? (No boot image, faster download)'
-        required: false
-        type: boolean
-        default: false
       build_time:
         description: 'Set kernel build time (format described in repository documentation)'
         required: false
