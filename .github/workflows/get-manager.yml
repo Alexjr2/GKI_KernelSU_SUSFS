@@ -177,7 +177,11 @@ jobs:
         run: |
           BUILD_ID=$(curl -s -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
             "https://api.github.com/repos/sidex15/susfs4ksu-module/actions/workflows/build.yml/runs?status=success" |
-            jq -r '.workflow_runs[0].id')
+            jq -r '.workflow_runs
+            | map(select(.head_branch
+            | test("^v?1\\.5\\."))) | sort_by(.run_number)
+            | last
+            | .id')
 
           ARTIFACTS=$(curl -s -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
             "https://api.github.com/repos/sidex15/susfs4ksu-module/actions/runs/$BUILD_ID/artifacts")
