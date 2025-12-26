@@ -49,6 +49,10 @@ on:
         required: true
         type: boolean
         default: false
+      supp_op:
+        required: true
+        type: boolean
+        default: false
       build_time:
         required: false
         type: string
@@ -223,7 +227,7 @@ jobs:
           echo 'Adding patch to build'
           echo "obj-y += hmbird_patch.o" >> Makefile
           tail -n 3 Makefile
-      
+
       - name: Determine KernelSU branch
         run: |
 
@@ -298,10 +302,6 @@ jobs:
             cp ../../susfs4ksu/kernel_patches/KernelSU/10_enable_susfs_for_ksu.patch ./ 
             patch -p1 --forward < 10_enable_susfs_for_ksu.patch || true
 
-            # echo "Applying Official specific patches..."
-            # cp ../../zzh_patch/mksu_core_hook.c.patch ./
-            # patch -p1 --fuzz=3 < mksu_core_hook.c.patch
-
           elif [ "${{ inputs.kernelsu_variant }}" == "Next" ]; then
             # Temporarily restore KernelSU-Next dev build
             echo "Applying SUSFS patches for KernelSU-Next..."
@@ -330,10 +330,6 @@ jobs:
             cp ../../susfs4ksu/kernel_patches/KernelSU/10_enable_susfs_for_ksu.patch ./
             patch -p1 --forward < 10_enable_susfs_for_ksu.patch || true
 
-            # echo "Applying MKSU specific patches..."
-            # cp ../../zzh_patch/mksu_core_hook.c.patch ./
-            # patch -p1 --fuzz=3 < mksu_core_hook.c.patch
-
           elif [ "${{ inputs.kernelsu_variant }}" == "SukiSU" ]; then
             echo "Applying SUSFS patches for SukiSU..."
             cd ./KernelSU
@@ -346,11 +342,6 @@ jobs:
           cd ../common
 
           patch -p1 --fuzz=3 < 50_add_susfs_in_gki-${{ inputs.android_version }}-${{ inputs.kernel_version }}.patch || true
-
-          # if [ "${{ inputs.kernelsu_variant }}" == "MKSU" ]; then
-          #   cp ../../zzh_patch/rm_devpt.patch ./
-          #   patch -p1 < rm_devpt.patch
-          # fi
 
           FORMATTED_BRANCH="${{ inputs.android_version }}-${{ inputs.kernel_version }}"
           if grep -q deprecated <<< "$REMOTE_BRANCH" && \
@@ -499,6 +490,19 @@ jobs:
           SYMBOL_LIST=$CONFIG/common/android/abi_gki_aarch64_xiaomi
           echo "device_find_any_child" >> $SYMBOL_LIST
 
+      - name: Apply a patch to hide a certain feature
+        run: |
+          echo "Switching to config directory: $CONFIG..."
+          cd "$CONFIG/common"
+          # Apply additional patch
+          if [ "${{ inputs.kernelsu_variant }}" == "SukiSU" ]; then
+          cp ../../SukiSU_patch/69_hide_stuff.patch ./
+          patch -p1 -F 3 < 69_hide_stuff.patch
+          else
+            cp ../../kernel_patches/69_hide_stuff.patch ./
+            patch -p1 -F 3 < 69_hide_stuff.patch
+          fi
+
       - name: LZ4KD & LZ4k_oplus configuration
         if: ${{ inputs.use_zram }}
         run: |
@@ -546,6 +550,7 @@ jobs:
             echo "CONFIG_CRYPTO_LZ4KD=y" >> "$CONFIG_FILE"
             echo "CONFIG_CRYPTO_842=y" >> "$CONFIG_FILE"
             echo "CONFIG_CRYPTO_LZ4K_OPLUS=y" >> "$CONFIG_FILE"
+            echo "CONFIG_ZRAM_WRITEBACK=y" >> "$CONFIG_FILE"
           fi
       
       - name: BBG patch
